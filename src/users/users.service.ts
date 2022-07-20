@@ -54,7 +54,7 @@ export class UsersService {
       //   ChannelId: 1,
       // });
       await queryRunner.commitTransaction();
-      return true;
+      return returned;
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction();
