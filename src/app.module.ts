@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import Entities from './entities';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,9 +30,10 @@ import { UsersModule } from './users/users.module';
       database: process.env.DB_NAME,
       synchronize: true,
       logging: true,
-      entities: [],
+      entities: Entities,
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
