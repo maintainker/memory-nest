@@ -7,20 +7,26 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthService } from 'src/auth/auth.service';
 import { JoinRequestDto } from './dtos/join.request.dto';
+import { LoginRequestDto } from './dtos/login.request.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('USERS')
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private authService: AuthService,
+  ) {}
 
   @ApiOperation({ summary: '로그인' })
   // @UseGuards(LocalAuthGuard)
-  // @Post('login')
-  // async login(@Users() user: Users) {
-  //   return user;
-  // }
+  @Post('login')
+  async login(@Body() data: LoginRequestDto) {
+    return this.authService.login(data);
+  }
+
   @ApiOperation({ summary: '회원가입' })
   // @UseGuards(NotLoggedInGuard)// 추후 인증 추가
   @Post()
