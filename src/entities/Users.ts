@@ -10,7 +10,7 @@ import {
 
 @Index('userId', ['userId'], { unique: true })
 @Entity({ schema: 'memory', name: 'users' })
-export class Users {
+export default class Users {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

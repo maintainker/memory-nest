@@ -1,4 +1,4 @@
-import { Users } from './Users';
+import { default as Users } from './Users';
 
 const Entities = [Users];
 
