@@ -5,6 +5,7 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from './auth/jwt.module';
 import Entities from './entities';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
@@ -34,7 +35,11 @@ import { UsersService } from './users/users.service';
       entities: Entities,
     }),
     UsersModule,
-    AuthModule,
+    // AuthModule,
+    JwtModule.forRoot({
+      privateAccessKey: process.env.TOKEN_ACCESS_KEY,
+      privateRefreshKey: process.env.TOKEN_REFRESH_KEY,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
