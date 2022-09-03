@@ -45,6 +45,7 @@ export class UsersService {
         this.jwtService.sign(user.id);
       return {
         body: {
+          success: true,
           access,
           access_expire,
           refresh_expire,
@@ -62,10 +63,11 @@ export class UsersService {
   async join(userId: string, name: string, password: string) {
     const queryRunner = await this.connection.createQueryRunner();
     await queryRunner.connect();
-
+    await queryRunner.startTransaction();
     const user = await queryRunner.manager
       .getRepository(Users)
       .findOne({ where: { userId } });
+    console.log(user);
     if (user) {
       throw new ForbiddenException('이미 존재하는 사용자입니다');
     }

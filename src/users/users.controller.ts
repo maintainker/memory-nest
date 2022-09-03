@@ -4,9 +4,8 @@ import {
   Post,
   NotFoundException,
   ForbiddenException,
-  Headers,
-  Req,
   Res,
+  HttpException,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -30,34 +29,34 @@ export class UsersController {
       refresh: string;
     };
     if (login.refresh === undefined) {
-      return response.status(200).send(login);
+      return response.status(202).send(login);
     }
     response.cookie('Memory-refresh', login.refresh, {
       httpOnly: true,
       secure: true,
-      maxAge: 60 * 60 * 2,
+      maxAge: 60 * 60 * 2, // 2시간
     });
     return response.status(200).send(login.body);
   }
 
   @ApiOperation({ summary: '회원가입' })
   // @UseGuards(NotLoggedInGuard)// 추후 인증 추가
-  @Post()
-  async join(@Body() data: JoinRequestDto) {
-    const user = this.usersService.findByUserId(data.userId);
-    if (!user) {
-      throw new NotFoundException();
-    }
+  @Post('sign-up')
+  async join(@Res() response: Response, @Body() data: JoinRequestDto) {
     const result = await this.usersService.join(
       data.userId,
       data.name,
       data.password,
     );
-    console.log('users: ', result);
     if (result) {
-      return 'ok';
+      return response.status(201).send({
+        seccess: true,
+      });
     } else {
-      throw new ForbiddenException();
+      throw new HttpException(
+        '비정상적인 오류입니다. 지속되면 개발자에게 문의주세요.',
+        400,
+      );
     }
   }
 }
