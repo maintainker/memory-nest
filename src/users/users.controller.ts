@@ -9,10 +9,12 @@ import {
   Get,
   Req,
   UseGuards,
+  Inject,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { JwtService } from 'src/auth/jwt.service';
 import Users from 'src/entities/Users';
 import { JoinRequestDto } from './dtos/join.request.dto';
 import { LoginRequestDto } from './dtos/login.request.dto';
@@ -24,6 +26,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(
     private usersService: UsersService, // private authService: AuthService,
+    @Inject(JwtService) private readonly jwtService: JwtService,
   ) {}
 
   @ApiOperation({ summary: '유저정보 가져오기' })
@@ -35,8 +38,31 @@ export class UsersController {
   @ApiOperation({ summary: '토큰 가져오기' })
   @Get('token')
   async getToken(@Req() request: Request, @Res() response: Response) {
-    console.log(request.cookies);
-    return response.status(200).send();
+    try {
+      const refresh = request.cookies['Memory-refresh'];
+      const refreshData = await this.jwtService.verifyRefresh(refresh);
+      const token = await this.jwtService.sign(refreshData['id']);
+      const today = new Date().valueOf();
+      if (today > refreshData['refresh_expire']) {
+        throw { message: '유효기한이 지난 토큰입니다. 확인해주세요.' };
+      }
+      const returnData = {
+        access: token.access,
+        access_expire: token.access_expire,
+        refresh_expire: token.refresh_expire,
+      };
+      response.cookie('Memory-refresh', token.refresh, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 60 * 60 * 6 * 1000,
+      });
+      return response.status(200).send(returnData);
+    } catch (error) {
+      console.error(error);
+      return response
+        .status(401)
+        .send(error.message || '비정상적인 토큰입니다. 확인해주세요.');
+    }
   }
 
   @ApiOperation({ summary: '로그인' })
@@ -50,15 +76,11 @@ export class UsersController {
     if (login.refresh === undefined) {
       return response.status(202).send(login);
     }
-    response.cookie(
-      'refresh',
-      login.refresh,
-      //  {
-      //   httpOnly: true,
-      //   // secure: true,
-      //   maxAge: 60 * 60 * 2 * 1000, // 2시간
-      // }
-    );
+    response.cookie('Memory-refresh', login.refresh, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 6 * 1000,
+    });
     return response.status(200).send(login.body);
   }
 

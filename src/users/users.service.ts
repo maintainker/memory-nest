@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Connection } from 'typeorm';
+import { Connection } from 'typeorm';
 import Users from 'src/entities/Users';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';

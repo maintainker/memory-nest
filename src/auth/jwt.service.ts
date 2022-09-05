@@ -31,4 +31,7 @@ export class JwtService {
   verifyAccess(token: string) {
     return jwt.verify(token, this.options.privateAccessKey);
   }
+  verifyRefresh(token: string) {
+    return jwt.verify(token, this.options.privateRefreshKey);
+  }
 }
