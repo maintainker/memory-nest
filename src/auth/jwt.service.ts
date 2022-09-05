@@ -9,16 +9,16 @@ export class JwtService {
   ) {
     console.log(options);
   }
-  sign(userId: number) {
+  sign(id: number) {
     const today = new Date().valueOf();
     const access_expire = today + 1000 * 60 * 15;
     const refresh_expire = today + 1000 * 60 * 120;
     const access = jwt.sign(
-      { userId, access_expire },
+      { id, access_expire },
       this.options.privateAccessKey,
     );
     const refresh = jwt.sign(
-      { userId, refresh_expire },
+      { id, refresh_expire },
       this.options.privateRefreshKey,
     );
     return {

@@ -67,13 +67,10 @@ export class UsersService {
     const user = await queryRunner.manager
       .getRepository(Users)
       .findOne({ where: { userId } });
-    console.log(user);
     if (user) {
       throw new ForbiddenException('이미 존재하는 사용자입니다');
     }
-    console.log('test2');
     const hashedPassword = await bcrypt.hash(password, 12);
-    console.log(hashedPassword);
     try {
       const returned = await queryRunner.manager.getRepository(Users).save({
         userId,

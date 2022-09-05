@@ -6,11 +6,17 @@ import {
   ForbiddenException,
   Res,
   HttpException,
+  Get,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Response, Request } from 'express';
+import { AuthGuard } from 'src/auth/auth.guard';
+import Users from 'src/entities/Users';
 import { JoinRequestDto } from './dtos/join.request.dto';
 import { LoginRequestDto } from './dtos/login.request.dto';
+import { User } from './users.decorator';
 import { UsersService } from './users.service';
 
 @ApiTags('USERS')
@@ -19,6 +25,19 @@ export class UsersController {
   constructor(
     private usersService: UsersService, // private authService: AuthService,
   ) {}
+
+  @ApiOperation({ summary: '유저정보 가져오기' })
+  @UseGuards(AuthGuard)
+  @Get()
+  async getUser(@User() user: Users, @Res() response: Response) {
+    return response.status(200).send({ name: user.name, userId: user.userId });
+  }
+  @ApiOperation({ summary: '토큰 가져오기' })
+  @Get('token')
+  async getToken(@Req() request: Request, @Res() response: Response) {
+    console.log(request.cookies);
+    return response.status(200).send();
+  }
 
   @ApiOperation({ summary: '로그인' })
   // @UseGuards(LocalAuthGuard)
@@ -31,11 +50,15 @@ export class UsersController {
     if (login.refresh === undefined) {
       return response.status(202).send(login);
     }
-    response.cookie('Memory-refresh', login.refresh, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 60 * 60 * 2, // 2시간
-    });
+    response.cookie(
+      'refresh',
+      login.refresh,
+      //  {
+      //   httpOnly: true,
+      //   // secure: true,
+      //   maxAge: 60 * 60 * 2 * 1000, // 2시간
+      // }
+    );
     return response.status(200).send(login.body);
   }
 

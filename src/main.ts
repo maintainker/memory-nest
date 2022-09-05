@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import { METHODS } from 'http';
 import * as path from 'path';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
@@ -17,9 +18,11 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  // app.use(cors)
   app.enableCors({
-    origin: true,
+    origin: ['http://localhost:3000'],
     credentials: true,
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
   });
   app.useStaticAssets(
     process.env.NODE_ENV === 'production'

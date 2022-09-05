@@ -1,9 +1,15 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthMiddleWare } from './auth/auth.middleware';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './auth/jwt.module';
 import Entities from './entities';
@@ -44,4 +50,10 @@ import { UsersService } from './users/users.service';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleWare)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
