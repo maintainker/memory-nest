@@ -49,7 +49,6 @@ export class UsersService {
           access,
           access_expire,
           refresh_expire,
-          name: user.name,
         },
         refresh,
       };

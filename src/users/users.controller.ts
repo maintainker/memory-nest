@@ -38,6 +38,10 @@ export class UsersController {
   async getToken(@Req() request: Request, @Res() response: Response) {
     try {
       const refresh = request.cookies['Memory-refresh'];
+      console.log(refresh);
+      if (!refresh) {
+        throw { message: '토큰이 유효하지 않습니다. 확인해주세요.' };
+      }
       const refreshData = await this.jwtService.verifyRefresh(refresh);
       const token = await this.jwtService.sign(refreshData['id']);
       const today = new Date().valueOf();
