@@ -10,19 +10,16 @@ import {
 } from 'typeorm';
 import AlbumUser from './AlbumUser';
 
-@Index('userId', ['userId'], { unique: true })
-@Entity({ schema: 'memory', name: 'users' })
-export default class Users {
+@Index()
+@Entity({ schema: 'memory', name: 'albums' })
+export default class Albums {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-  id: number;
-
-  @Column('varchar', { name: 'userId', unique: true, length: 30 })
-  userId: string;
+  albumId: number;
 
   @Column('varchar', { name: 'name', length: 30, nullable: false })
   name: string;
 
-  @Column('varchar', { name: 'password', length: 100, nullable: false })
+  @Column('varchar', { name: 'password', length: 100, nullable: true })
   password: string;
 
   @CreateDateColumn()
@@ -34,9 +31,9 @@ export default class Users {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @ManyToOne(() => AlbumUser, (albumUser) => albumUser.user, {
-    onDelete: 'SET NULL',
+  @ManyToOne(() => AlbumUser, (albumUser) => albumUser.album, {
     cascade: ['insert', 'update', 'remove'],
+    onDelete: 'SET NULL',
   })
   albumUser: AlbumUser[];
 }

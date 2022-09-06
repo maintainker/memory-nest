@@ -51,6 +51,7 @@ export class AuthMiddleWare implements NestMiddleware<Request, Response> {
               id: userInfo.id,
               name: userInfo.name,
               userId: userInfo.userId,
+              albumUser: userInfo.albumUser,
             };
         }
       } catch (error) {

@@ -15,8 +15,9 @@ export class AuthService {
       bcrypt.hash(password, 12),
       this.usersService.findByUserId(userId),
     ]);
-    if (user && user.password === hashedPassword) {
-      const { password, ...result } = user;
+    if (!user) return null;
+    const { password: userPassword, ...result } = user;
+    if (userPassword === hashedPassword) {
       return result;
     }
     return null;

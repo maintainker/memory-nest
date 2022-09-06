@@ -15,6 +15,7 @@ import { JwtModule } from './auth/jwt.module';
 import Entities from './entities';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
+import { AlbumsModule } from './albums/albums.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -46,6 +47,7 @@ import { UsersService } from './users/users.service';
       privateAccessKey: process.env.TOKEN_ACCESS_KEY,
       privateRefreshKey: process.env.TOKEN_REFRESH_KEY,
     }),
+    AlbumsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
