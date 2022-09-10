@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AlbumRole } from 'src/@types/enum';
 import Albums from 'src/entities/Album';
 import AlbumUser from 'src/entities/AlbumUser';
 import Users from 'src/entities/Users';
-import { Connection, Repository } from 'typeorm';
+import { Connection, QueryRunner, Repository } from 'typeorm';
 import { CreateAlbumRequestDto } from './dtos/createAlbum.request.dtos';
 
 @Injectable()
@@ -18,13 +19,11 @@ export class AlbumsService {
     private connection: Connection,
   ) {}
   async createAlbum(body: CreateAlbumRequestDto, user: Users) {
-    const queryRunner = await this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    let queryRunner: QueryRunner | null = null;
     try {
-      const thisUser = await this.usersRepository.findOne({
-        where: { id: user.id },
-      });
+      queryRunner = await this.connection.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       const newAlbumParam: { name: string; password?: string } = {
         name: body.albumName,
       };
@@ -33,30 +32,21 @@ export class AlbumsService {
       const newAlbumUser = this.albumUsersRepository.create({
         nickname: body.nickname || user.name,
         role: AlbumRole.Editor,
-        user: { id: thisUser.id, userId: thisUser.userId },
-        album: { albumId: newAlbum.albumId, name: newAlbum.name },
+        user: user,
+        album: newAlbum,
       });
-      newAlbum.albumUser = [newAlbumUser];
       newAlbumUser.album = newAlbum;
-      await queryRunner.commitTransaction();
       await Promise.all([
-        this.albumRepository.save(newAlbum),
+        // this.albumRepository.save(newAlbum),
         this.albumUsersRepository.save(newAlbumUser),
-        this.usersRepository.update(
-          { id: user.id },
-          {
-            albumUser: thisUser.albumUser
-              ? [...thisUser.albumUser, newAlbumUser]
-              : [newAlbumUser],
-          },
-        ),
       ]);
+      console.log('create album& albumuser finish ');
     } catch (error) {
       console.error(error);
-      await queryRunner.rollbackTransaction();
+      queryRunner && (await queryRunner.rollbackTransaction());
       throw error;
     } finally {
-      await queryRunner.release();
+      queryRunner && (await queryRunner.release());
     }
   }
 }

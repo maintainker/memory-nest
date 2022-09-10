@@ -1,4 +1,4 @@
-declare enum AlbumRole {
+export enum AlbumRole {
   Editor = 'Editor',
   Viewer = 'Viewer',
 }

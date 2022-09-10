@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import Users from 'src/entities/Users';
 import { User } from 'src/users/users.decorator';
 import { Response } from 'express';
@@ -8,11 +8,12 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { AlbumsService } from './albums.service';
 
 @ApiTags('ALBUMS')
-@UseGuards(AuthGuard)
 @Controller('albums')
 export class AlbumsController {
   constructor(private readonly albumService: AlbumsService) {}
   @ApiOperation({ summary: '유저의 album list 가져오기' })
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('authorization')
   @Get()
   async getAlbums(@User() user: Users, @Res() response: Response) {
     return response.status(200).send({ success: true, albums: user.albumUser });
@@ -20,6 +21,8 @@ export class AlbumsController {
 
   @ApiOperation({ summary: 'album 생성하기' })
   @Post()
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
   async createAlbum(
     @User() user: Users,
     @Body() body: CreateAlbumRequestDto,

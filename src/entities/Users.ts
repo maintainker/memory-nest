@@ -5,6 +5,7 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -34,9 +35,8 @@ export default class Users {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @ManyToOne(() => AlbumUser, (albumUser) => albumUser.user, {
+  @OneToMany(() => AlbumUser, (albumUser) => albumUser.albumUserId, {
     onDelete: 'SET NULL',
-    cascade: ['insert', 'update', 'remove'],
   })
-  albumUser: AlbumUser[];
+  albumUser: number[];
 }

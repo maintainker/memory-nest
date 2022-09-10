@@ -9,7 +9,7 @@ import {
   UseGuards,
   Inject,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { JwtService } from 'src/auth/jwt.service';
@@ -28,6 +28,7 @@ export class UsersController {
   ) {}
 
   @ApiOperation({ summary: '유저정보 가져오기' })
+  @ApiBearerAuth('authorization')
   @UseGuards(AuthGuard)
   @Get()
   async getUser(@User() user: Users, @Res() response: Response) {
@@ -38,7 +39,6 @@ export class UsersController {
   async getToken(@Req() request: Request, @Res() response: Response) {
     try {
       const refresh = request.cookies['Memory-refresh'];
-      console.log(refresh);
       if (!refresh) {
         throw { message: '토큰이 유효하지 않습니다. 확인해주세요.' };
       }

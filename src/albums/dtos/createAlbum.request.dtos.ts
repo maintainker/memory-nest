@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, ValidateIf } from 'class-validator';
 
 export class CreateAlbumRequestDto {
+  @ValidateIf((object, value) => !!value)
   @IsString()
-  @ValidateIf((object, value) => !value)
   @ApiProperty({
     example: '난 우리 가족의 아들',
     title: '닉네임',
@@ -20,8 +20,8 @@ export class CreateAlbumRequestDto {
   })
   public albumName!: string;
 
+  @ValidateIf((object, value) => !!value)
   @IsString()
-  @ValidateIf((object, value) => !value)
   @ApiProperty({
     example: '!suyohw88',
     title: '비밀번호',

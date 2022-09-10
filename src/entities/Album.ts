@@ -4,16 +4,18 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import AlbumUser from './AlbumUser';
 
-@Index()
+// @Index()
 @Entity({ schema: 'memory', name: 'albums' })
 export default class Albums {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+  @PrimaryGeneratedColumn({ type: 'int', name: 'albumId' })
   albumId: number;
 
   @Column('varchar', { name: 'name', length: 30, nullable: false })
@@ -31,9 +33,8 @@ export default class Albums {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @ManyToOne(() => AlbumUser, (albumUser) => albumUser.album, {
-    cascade: ['insert', 'update', 'remove'],
+  @OneToMany(() => AlbumUser, (albumUser) => albumUser.albumUserId, {
     onDelete: 'SET NULL',
   })
-  albumUser: AlbumUser[];
+  albumUser: number[];
 }
