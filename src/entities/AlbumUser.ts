@@ -13,8 +13,8 @@ import Users from './Users';
 // @Index()
 @Entity({ schema: 'memory', name: 'albumUser' })
 export default class AlbumUser {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'albumUserId' })
-  albumUserId: number;
+  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+  id: number;
 
   @Column('varchar', { name: 'nickname', length: 30, nullable: false })
   nickname: string;
@@ -27,30 +27,15 @@ export default class AlbumUser {
   })
   role: AlbumRole;
 
-  @ManyToOne(
-    () => Users,
-    (user) => ({
-      id: user.id,
-      userId: user.userId,
-      name: user.name,
-    }),
-    {
-      cascade: ['insert', 'update', 'remove'],
-      onDelete: 'CASCADE',
-    },
-  )
-  user: Pick<Users, 'id' | 'name' | 'userId'>;
+  @ManyToOne(() => Users, (user) => user.id, {
+    cascade: ['insert', 'update', 'remove'],
+    onDelete: 'CASCADE',
+  })
+  user: Users;
 
-  @ManyToOne(
-    () => Albums,
-    (album) => ({
-      albumId: album.albumId,
-      name: album.name,
-    }),
-    {
-      cascade: ['insert', 'update', 'remove'],
-      onDelete: 'CASCADE',
-    },
-  )
-  album: Pick<Albums, 'albumId' | 'name'>;
+  @ManyToOne(() => Albums, (album) => album.id, {
+    cascade: ['insert', 'update', 'remove'],
+    onDelete: 'CASCADE',
+  })
+  album: Albums;
 }

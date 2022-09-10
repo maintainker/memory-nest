@@ -15,8 +15,8 @@ import AlbumUser from './AlbumUser';
 // @Index()
 @Entity({ schema: 'memory', name: 'albums' })
 export default class Albums {
-  @PrimaryGeneratedColumn({ type: 'int', name: 'albumId' })
-  albumId: number;
+  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+  id: number;
 
   @Column('varchar', { name: 'name', length: 30, nullable: false })
   name: string;
@@ -33,7 +33,7 @@ export default class Albums {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => AlbumUser, (albumUser) => albumUser.albumUserId, {
+  @OneToMany(() => AlbumUser, (albumUser) => albumUser.id, {
     onDelete: 'SET NULL',
   })
   albumUser: number[];

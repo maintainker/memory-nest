@@ -10,8 +10,6 @@ import { CreateAlbumRequestDto } from './dtos/createAlbum.request.dtos';
 @Injectable()
 export class AlbumsService {
   constructor(
-    @InjectRepository(Users, process.env.DB_NAME)
-    private usersRepository: Repository<Users>,
     @InjectRepository(AlbumUser, process.env.DB_NAME)
     private albumUsersRepository: Repository<AlbumUser>,
     @InjectRepository(Albums, process.env.DB_NAME)
@@ -36,11 +34,7 @@ export class AlbumsService {
         album: newAlbum,
       });
       newAlbumUser.album = newAlbum;
-      await Promise.all([
-        // this.albumRepository.save(newAlbum),
-        this.albumUsersRepository.save(newAlbumUser),
-      ]);
-      console.log('create album& albumuser finish ');
+      await this.albumUsersRepository.save(newAlbumUser);
     } catch (error) {
       console.error(error);
       queryRunner && (await queryRunner.rollbackTransaction());
@@ -48,5 +42,19 @@ export class AlbumsService {
     } finally {
       queryRunner && (await queryRunner.release());
     }
+  }
+  async getAlbums(id: number) {
+    const value = await this.albumUsersRepository.find({
+      where: { user: { id } },
+      select: ['id', 'nickname', 'album'],
+      relations: {
+        album: true,
+      },
+    });
+    console.log(value);
+    return value.map((el) => ({
+      ...el,
+      album: { id: el.album.id, name: el.album.name },
+    }));
   }
 }

@@ -35,7 +35,7 @@ export default class Users {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => AlbumUser, (albumUser) => albumUser.albumUserId, {
+  @OneToMany(() => AlbumUser, (albumUser) => albumUser.id, {
     onDelete: 'SET NULL',
   })
   albumUser: number[];

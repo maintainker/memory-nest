@@ -11,13 +11,6 @@ import { AlbumsService } from './albums.service';
 @Controller('albums')
 export class AlbumsController {
   constructor(private readonly albumService: AlbumsService) {}
-  @ApiOperation({ summary: '유저의 album list 가져오기' })
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('authorization')
-  @Get()
-  async getAlbums(@User() user: Users, @Res() response: Response) {
-    return response.status(200).send({ success: true, albums: user.albumUser });
-  }
 
   @ApiOperation({ summary: 'album 생성하기' })
   @Post()
@@ -29,7 +22,7 @@ export class AlbumsController {
     @Res() response: Response,
   ) {
     try {
-      await this.albumService.createAlbum(body, user);
+      await this.albumService.createAlbum(body, user); // TODO : 앨범 리턴해서 생성 유무 알려주기
       return response.status(201).send({ success: true });
     } catch (error) {
       return response.status(200).send({
@@ -39,6 +32,23 @@ export class AlbumsController {
           '비정상적인 에러입니다. 지속되면 개발자에게 문의주세요.',
       });
     }
-    return true;
+  }
+
+  @ApiOperation({ summary: 'albumList 가져오기' })
+  @Get()
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
+  async getAlbumList(@User() user: Users, @Res() response: Response) {
+    try {
+      const values = await this.albumService.getAlbums(user.id);
+      return response.status(200).send({ list: values });
+    } catch (error) {
+      return response.status(200).send({
+        success: false,
+        message:
+          error.message ||
+          '비정상적인 에러입니다. 지속되면 개발자에게 문의주세요.',
+      });
+    }
   }
 }
