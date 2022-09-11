@@ -51,7 +51,6 @@ export class AlbumsService {
         album: true,
       },
     });
-    console.log(value);
     return value.map((el) => ({
       ...el,
       album: { id: el.album.id, name: el.album.name },

@@ -33,7 +33,6 @@ export class UsersService {
   > {
     const user = await this.findByUserId(userId);
     if (user) {
-      console.log(password);
       const isSamePassword = await bcrypt.compare(password, user.password);
       if (!isSamePassword) {
         return {

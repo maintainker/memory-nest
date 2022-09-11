@@ -6,9 +6,7 @@ import * as jwt from 'jsonwebtoken';
 export class JwtService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: JwtModuleOptions,
-  ) {
-    console.log(options);
-  }
+  ) {}
   sign(id: number) {
     const today = new Date().valueOf();
     const access_expire = today + 1000 * 60 * 15;
