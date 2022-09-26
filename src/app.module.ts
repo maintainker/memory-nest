@@ -10,12 +10,14 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthMiddleWare } from './auth/auth.middleware';
-import { AuthModule } from './auth/auth.module';
+// import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './auth/jwt.module';
 import Entities from './entities';
 import { UsersModule } from './users/users.module';
-import { UsersService } from './users/users.service';
+// import { UsersService } from './users/users.service';
 import { AlbumsModule } from './albums/albums.module';
+import { ImageModule } from './image/image.module';
+import { S3 } from 'aws-sdk';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +30,10 @@ import { AlbumsModule } from './albums/albums.module';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        AWS_S3_BUCKET_NAME: Joi.string().required(),
+        AWS_ACCESS_KEY_ID: Joi.string().required(),
+        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+        AWS_REGION: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -48,6 +54,7 @@ import { AlbumsModule } from './albums/albums.module';
       privateRefreshKey: process.env.TOKEN_REFRESH_KEY,
     }),
     AlbumsModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
