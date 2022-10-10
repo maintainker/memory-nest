@@ -3,14 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import AlbumUser from './AlbumUser';
+import Events from './Events';
 
 // @Index()
 @Entity({ schema: 'memory', name: 'albums' })
@@ -37,4 +35,9 @@ export default class Albums {
     onDelete: 'SET NULL',
   })
   albumUser: number[];
+
+  @OneToMany(() => Events, (event) => event.id, {
+    onDelete: 'CASCADE',
+  })
+  event: number[];
 }

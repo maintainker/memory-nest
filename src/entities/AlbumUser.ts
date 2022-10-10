@@ -1,12 +1,5 @@
 import { AlbumRole } from 'src/@types/enum';
-import {
-  Column,
-  Entity,
-  Index,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import Albums from './Album';
 import Users from './Users';
 
@@ -27,13 +20,13 @@ export default class AlbumUser {
   })
   role: AlbumRole;
 
-  @ManyToOne(() => Users, (user) => user.id, {
+  @ManyToOne(() => Users, (user) => user.albumUser, {
     cascade: ['insert', 'update', 'remove'],
     onDelete: 'CASCADE',
   })
   user: Users;
 
-  @ManyToOne(() => Albums, (album) => album.id, {
+  @ManyToOne(() => Albums, (album) => album.albumUser, {
     cascade: ['insert', 'update', 'remove'],
     onDelete: 'CASCADE',
   })
