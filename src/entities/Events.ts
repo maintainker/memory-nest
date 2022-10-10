@@ -23,7 +23,10 @@ export default class Events {
   description: string;
 
   @Column('date')
-  date: Date;
+  startDate: Date;
+
+  @Column('date')
+  endDate: Date;
 
   @CreateDateColumn()
   createAt: Date;
@@ -34,11 +37,13 @@ export default class Events {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @ManyToOne(() => Albums, (albums) => albums.id, {
+  @ManyToOne(() => Albums, (albums) => albums.event, {
     cascade: ['insert', 'update', 'remove'],
     onDelete: 'CASCADE',
   })
   album: Albums;
+
+  //TODO: 썸네일용 Photo
 
   @OneToMany(() => Spots, (spot) => spot.id, {
     onDelete: 'CASCADE',

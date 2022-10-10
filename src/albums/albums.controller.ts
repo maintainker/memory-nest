@@ -1,11 +1,20 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import Users from 'src/entities/Users';
 import { User } from 'src/users/users.decorator';
-import { Response } from 'express';
+import { response, Response } from 'express';
 import { CreateAlbumRequestDto } from './dtos/createAlbum.request.dtos';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AlbumsService } from './albums.service';
+import { userInfo } from 'os';
 
 @ApiTags('ALBUMS')
 @Controller('albums')
@@ -50,5 +59,21 @@ export class AlbumsController {
           '비정상적인 에러입니다. 지속되면 개발자에게 문의주세요.',
       });
     }
+  }
+
+  @ApiOperation({ summary: 'album Detail 가져오기' })
+  @Get('/detail')
+  @ApiBearerAuth('authorization')
+  @UseGuards(AuthGuard)
+  async getAlbumDetail(
+    @User() user: Users,
+    @Res() response: Response,
+    @Query() query: { albumId: string },
+  ) {
+    const res = await this.albumService.getAlbumDetail(
+      Number(query.albumId),
+      user.id,
+    );
+    return response.send(res);
   }
 }

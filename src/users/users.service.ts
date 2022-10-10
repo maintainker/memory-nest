@@ -23,7 +23,10 @@ export class UsersService {
     });
   }
   async findById(id: number) {
-    return this.usersRepository.findOne({ where: { id } });
+    return this.usersRepository.findOne({
+      where: { id },
+      select: ['albumUser', 'userId', 'id', 'name'],
+    });
   }
   async login({
     userId,

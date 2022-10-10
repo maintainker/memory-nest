@@ -13,10 +13,10 @@ export default class Spots {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
-  @ManyToOne(() => Events, (events) => events.spots, {
-    cascade: ['insert', 'update', 'remove'],
-    onDelete: 'CASCADE',
-  })
+  // @ManyToOne(() => Events, (events) => events.spots, {
+  //   cascade: ['insert', 'update', 'remove'],
+  //   onDelete: 'CASCADE',
+  // })
   event: Events;
 
   @Column({ type: 'int', name: 'order' })

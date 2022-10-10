@@ -18,6 +18,7 @@ import { UsersModule } from './users/users.module';
 import { AlbumsModule } from './albums/albums.module';
 import { ImageModule } from './image/image.module';
 import { S3 } from 'aws-sdk';
+import { EventsModule } from './events/events.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -55,6 +56,7 @@ import { S3 } from 'aws-sdk';
     }),
     AlbumsModule,
     ImageModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

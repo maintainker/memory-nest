@@ -56,4 +56,21 @@ export class AlbumsService {
       album: { id: el.album.id, name: el.album.name },
     }));
   }
+
+  async getAlbumDetail(albumId: number, user: number) {
+    // const value = await this.albumRepository.find({ where: { id: albumId } });
+    const value = await Promise.all([
+      this.albumRepository.findOne({
+        select: ['id', 'name', 'event'],
+        where: { id: albumId },
+      }),
+      this.albumUsersRepository.findOne({
+        where: { user: { id: user }, album: { id: albumId } },
+      }),
+    ]);
+    return {
+      album: value[0],
+      albumUser: value[1],
+    };
+  }
 }

@@ -31,4 +31,6 @@ export default class AlbumUser {
     onDelete: 'CASCADE',
   })
   album: Albums;
+
+  // @ManyToOne(()=>)
 }
